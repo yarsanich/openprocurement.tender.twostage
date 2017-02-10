@@ -26,11 +26,11 @@ from openprocurement.api.models import (
 from urlparse import urlparse, parse_qs
 from string import hexdigits
 from openprocurement.tender.openua.utils import (
-    calculate_business_date, has_unanswered_questions, has_unanswered_complaints
+    calculate_business_date, has_unanswered_complaints
 )
 from openprocurement.tender.openua.models import (
     Complaint as BaseComplaint, Award as BaseAward, Item as BaseItem,
-    PeriodStartEndRequired, SifterListType, COMPLAINT_SUBMIT_TIME,
+    PeriodStartEndRequired, SifterListType,
     EnquiryPeriod, ENQUIRY_STAND_STILL_TIME, AUCTION_PERIOD_TIME,
     calculate_normalized_date, Tender as OpenUATender,
 )
@@ -41,14 +41,16 @@ create_role_ts = create_role + ts_role
 pre_qualifications_role = (blacklist('owner_token', '_attachments', 'revisions') + schematics_embedded_role)
 ts_auction_role = auction_role
 
-TENDERING_DAYS = 30
+TENDERING_DAYS = 3
 TENDERING_DURATION = timedelta(days=TENDERING_DAYS)
-TENDERING_AUCTION = timedelta(days=35)
-QUESTIONS_STAND_STILL = timedelta(days=10)
-PREQUALIFICATION_COMPLAINT_STAND_STILL = timedelta(days=5)
-COMPLAINT_STAND_STILL = timedelta(days=10)
+TENDERING_AUCTION = timedelta(days=2)
+QUESTIONS_STAND_STILL = timedelta(days=1)
+PREQUALIFICATION_COMPLAINT_STAND_STILL = timedelta(seconds=1)
+COMPLAINT_STAND_STILL = timedelta(seconds=1)
 BID_UNSUCCESSFUL_FROM = datetime(2016, 10, 18, tzinfo=TZ)
-
+COMPLAINT_SUBMIT_TIME = timedelta(seconds=1)
+TENDERING_EXTRA_PERIOD = timedelta(days=3)
+STAND_STILL_TIME = timedelta(seconds = 1)
 
 class BidModelType(ModelType):
 
@@ -102,17 +104,17 @@ class ComplaintModelType(BaseComplaintModelType):
 class Item(BaseItem):
     """A good, service, or work to be contracted."""
 
-    description_en = StringType(required=True, min_length=1)
+    description_en = StringType()
 
 
 class Identifier(BaseIdentifier):
 
-    legalName_en = StringType(required=True, min_length=1)
+    legalName_en = StringType()
 
 
 class ContactPoint(BaseContactPoint):
 
-    name_en = StringType(required=True, min_length=1)
+    name_en = StringType()
     availableLanguage = StringType(required=True, choices=['uk', 'en', 'ru'], default='uk')
 
 
@@ -125,7 +127,7 @@ class Organization(Model):
         }
 
     name = StringType(required=True)
-    name_en = StringType(required=True, min_length=1)
+    name_en = StringType()
     name_ru = StringType()
     identifier = ModelType(Identifier, required=True)
     additionalIdentifiers = ListType(ModelType(Identifier))
@@ -159,6 +161,13 @@ class Contract(BaseContract):
     documents = ListType(ModelType(Document), default=list())
     items = ListType(ModelType(Item))
 
+    def validate_dateSigned(self, data, value):
+        if value and isinstance(data['__parent__'], Model):
+            award = [i for i in data['__parent__'].awards if i.id == data['awardID']][0]
+            if award.complaintPeriod.endDate >= value:
+                raise ValidationError(u"Contract signature date should be after award complaint period end date ({})".format(award.complaintPeriod.endDate.isoformat()))
+            if value > get_now():
+                raise ValidationError(u"Contract signature date can't be in the future")
 
 class Complaint(BaseComplaint):
     class Options:
@@ -261,12 +270,11 @@ class Lot(BaseLot):
 class LotValue(BaseLotValue):
     class Options:
         roles = {
-            'create': whitelist('value', 'relatedLot', 'subcontractingDetails'),
-            'edit': whitelist('value', 'relatedLot', 'subcontractingDetails'),
+            'create': whitelist('value', 'relatedLot'),
+            'edit': whitelist('value', 'relatedLot'),
             'auction_view': whitelist('value', 'date', 'relatedLot', 'participationUrl', 'status',),
         }
 
-    subcontractingDetails = StringType()
     status = StringType(choices=['pending', 'active', 'unsuccessful'],
                         default='pending')
 
@@ -359,34 +367,29 @@ class Bid(BaseBid):
             'Administrator': Administrator_bid_role,
             'embedded': view_bid_role,
             'view': view_bid_role,
-            'create': whitelist('value', 'tenderers', 'parameters', 'lotValues', 'status', 'selfQualified', 'selfEligible', 'subcontractingDetails'),
-            'edit': whitelist('value', 'tenderers', 'parameters', 'lotValues', 'status', 'subcontractingDetails'),
+            'create': whitelist('value', 'tenderers', 'parameters', 'lotValues', 'status'),
+            'edit': whitelist('value', 'tenderers', 'parameters', 'lotValues', 'status'),
             'auction_view': whitelist('value', 'lotValues', 'id', 'date', 'parameters', 'participationUrl', 'status'),
             'auction_post': whitelist('value', 'lotValues', 'id', 'date'),
             'auction_patch': whitelist('id', 'lotValues', 'participationUrl'),
             'active.enquiries': whitelist(),
             'active.tendering': whitelist(),
-            'active.pre-qualification': whitelist('id', 'status', 'documents', 'eligibilityDocuments', 'tenderers'),
-            'active.pre-qualification.stand-still': whitelist('id', 'status', 'documents', 'eligibilityDocuments', 'tenderers'),
-            'active.auction': whitelist('id', 'status', 'documents', 'eligibilityDocuments', 'tenderers'),
+            'active.pre-qualification': whitelist('id', 'status', 'documents', 'tenderers'),
+            'active.pre-qualification.stand-still': whitelist('id', 'status', 'documents', 'tenderers'),
+            'active.auction': whitelist('id', 'status', 'documents', 'tenderers'),
             'active.qualification': view_bid_role,
             'active.awarded': view_bid_role,
             'complete': view_bid_role,
             'unsuccessful': view_bid_role,
-            'bid.unsuccessful':  whitelist('id', 'status', 'tenderers', 'documents', 'eligibilityDocuments', 'parameters', 'selfQualified', 'selfEligible', 'subcontractingDetails'),
+            'bid.unsuccessful':  whitelist('id', 'status', 'tenderers', 'documents', 'parameters'),
             'cancelled': view_bid_role,
             'invalid': whitelist('id', 'status'),
-            'invalid.pre-qualification': whitelist('id', 'status', 'documents', 'eligibilityDocuments', 'tenderers'),
+            'invalid.pre-qualification': whitelist('id', 'status', 'documents', 'tenderers'),
             'deleted': whitelist('id', 'status'),
         }
     documents = ListType(ModelType(Document), default=list())
     financialDocuments = ListType(ModelType(Document), default=list())
-    eligibilityDocuments = ListType(ModelType(Document), default=list())
-    qualificationDocuments = ListType(ModelType(Document), default=list())
     lotValues = ListType(ModelType(LotValue), default=list())
-    selfQualified = BooleanType(required=True, choices=[True])
-    selfEligible = BooleanType(required=True, choices=[True])
-    subcontractingDetails = StringType()
     parameters = ListType(ModelType(Parameter), default=list(), validators=[validate_parameters_uniq])
     status = StringType(choices=['draft','pending', 'active', 'invalid', 'invalid.pre-qualification', 'unsuccessful', 'deleted'],
                         default='pending')
@@ -451,14 +454,13 @@ class Award(BaseAward):
     def validate_eligible(self, data, eligible):
         pass
 
-
 class Qualification(Model):
     """ Pre-Qualification """
 
     class Options:
         roles = {
             'create': blacklist('id', 'status', 'documents', 'date'),
-            'edit': whitelist('status', 'qualified', 'eligible', 'title', 'title_en', 'title_ru',
+            'edit': whitelist('status', 'title', 'title_en', 'title_ru',
                               'description', 'description_en', 'description_ru'),
             'embedded': schematics_embedded_role,
             'view': schematics_default_role,
@@ -477,16 +479,6 @@ class Qualification(Model):
     date = IsoDateTimeType()
     documents = ListType(ModelType(Document), default=list())
     complaints = ListType(ModelType(Complaint), default=list())
-    qualified = BooleanType(default=False)
-    eligible = BooleanType(default=False)
-
-    def validate_qualified(self, data, qualified):
-        if data['status'] == 'active' and not qualified:
-            raise ValidationError(u'This field is required.')
-
-    def validate_eligible(self, data, eligible):
-        if data['status'] == 'active' and not eligible:
-            raise ValidationError(u'This field is required.')
 
     def validate_lotID(self, data, lotID):
         if isinstance(data['__parent__'], Model):
@@ -537,12 +529,12 @@ class Tender(BaseTender):
         }
 
     procurementMethodType = StringType(default="aboveThresholdTS")
-    title_en = StringType(required=True, min_length=1)
+    title_en = StringType()
 
     enquiryPeriod = ModelType(EnquiryPeriod, required=False)
     tenderPeriod = ModelType(PeriodStartEndRequired, required=True)
     auctionPeriod = ModelType(TenderAuctionPeriod, default={})
-    documents = ListType(ModelType(Document), default=list())  # All documents and attachments related to the tender.
+    documents = ListType(ModelType(Document), default=list())  # All
     items = ListType(ModelType(Item), required=True, min_size=1, validators=[validate_cpv_group, validate_items_uniq])  # The goods and services to be purchased, broken into line items wherever possible. Items should not be duplicated, but a quantity of 2 specified instead.
     complaints = ListType(ComplaintModelType(Complaint), default=list())
     contracts = ListType(ModelType(Contract), default=list())
@@ -560,7 +552,7 @@ class Tender(BaseTender):
     edit_accreditation = 4
     procuring_entity_kinds = ['general', 'special', 'defense']
     block_tender_complaint_status = OpenUATender.block_tender_complaint_status
-    block_complaint_status = OpenUATender.block_complaint_status
+    #block_complaint_status = OpenUATender.block_complaint_status
 
     def __acl__(self):
         acl = [
@@ -581,6 +573,7 @@ class Tender(BaseTender):
         return acl
 
     def initialize(self):
+        self.tenderPeriod.startDate = get_now()
         endDate = calculate_business_date(self.tenderPeriod.endDate, -QUESTIONS_STAND_STILL, self)
         self.enquiryPeriod = EnquiryPeriod(dict(startDate=self.tenderPeriod.startDate,
                                                 endDate=endDate,
@@ -602,15 +595,14 @@ class Tender(BaseTender):
 
     @serializable(type=ModelType(Period))
     def complaintPeriod(self):
-        normalized_end = calculate_normalized_date(self.tenderPeriod.endDate, self)
-        return Period(dict(startDate=self.tenderPeriod.startDate, endDate=calculate_business_date(normalized_end, -COMPLAINT_SUBMIT_TIME, self)))
+        normalized_end = calculate_normalized_date(self.tenderPeriod.startDate + timedelta(seconds = 3), self)
+        return Period(dict(startDate=self.tenderPeriod.startDate, endDate=calculate_business_date(normalized_end, COMPLAINT_SUBMIT_TIME, self)))
 
     @serializable(serialize_when_none=False)
     def next_check(self):
         now = get_now()
         checks = []
-        if self.status == 'active.tendering' and self.tenderPeriod.endDate and \
-                not has_unanswered_complaints(self) and not has_unanswered_questions(self):
+        if self.status == 'active.tendering' and self.tenderPeriod.endDate:
             checks.append(self.tenderPeriod.endDate.astimezone(TZ))
         elif self.status == 'active.pre-qualification.stand-still' and self.qualificationPeriod and self.qualificationPeriod.endDate and not any([
             i.status in self.block_complaint_status

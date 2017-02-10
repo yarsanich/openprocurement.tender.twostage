@@ -39,8 +39,6 @@ test_bids = [
             "currency": "UAH",
             "valueAddedTaxIncluded": True
         },
-        'selfQualified': True,
-        'selfEligible': True
     },
     {
         "tenderers": [{
@@ -70,8 +68,6 @@ test_bids = [
             "currency": "UAH",
             "valueAddedTaxIncluded": True
         },
-        'selfQualified': True,
-        'selfEligible': True
     }
 ]
 now = datetime.now()
@@ -144,7 +140,7 @@ test_tender_data = {
         }
     ],
     "tenderPeriod": {
-        "endDate": (now + timedelta(days=TENDERING_DAYS+1)).isoformat()
+        "endDate": (now + timedelta(days=TENDERING_DAYS+15)).isoformat()
     },
     "procurementMethodType": "aboveThresholdTS",
 }
@@ -263,8 +259,8 @@ class BaseTenderWebTest(BaseBaseTenderWebTest):
                     "endDate": (now - timedelta(days=1)).isoformat()
                 },
                 "tenderPeriod": {
-                    "startDate": (now - timedelta(days=28)).isoformat(),
-                    "endDate": (now + timedelta(days=2)).isoformat()
+                    "startDate": (now - timedelta(days=7)).isoformat(),
+                    "endDate": (now + timedelta(days=3)).isoformat()
                 },
             })
         if status == 'active.pre-qualification':
@@ -383,7 +379,7 @@ class BaseTenderWebTest(BaseBaseTenderWebTest):
                 },
                 "tenderPeriod": {
                     "startDate": (now - timedelta(days=1)).isoformat(),
-                    "endDate": (now + TENDERING_DURATION).isoformat()
+                    "endDate": (now + TENDERING_DURATION + timedelta(days=3)).isoformat()
                 }
             })
         elif status == 'active.pre-qualification':

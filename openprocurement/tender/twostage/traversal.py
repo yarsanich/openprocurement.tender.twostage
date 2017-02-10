@@ -79,27 +79,4 @@ def bid_financial_documents_factory(request):
             return bid
 
 
-def bid_eligibility_documents_factory(request):
-    response = handle_root(request)
-    if response:
-        return response
-    tender = request.validated['tender']
-    if request.matchdict.get('bid_id'):
-        bid = get_item(tender, 'bid', request)
-        if request.matchdict.get('document_id'):
-            return get_document(bid, 'eligibility_document', request)
-        else:
-            return bid
 
-
-def bid_qualification_documents_factory(request):
-    response = handle_root(request)
-    if response:
-        return response
-    tender = request.validated['tender']
-    if request.matchdict.get('bid_id'):
-        bid = get_item(tender, 'bid', request)
-        if request.matchdict.get('document_id'):
-            return get_document(bid, 'qualification_document', request)
-        else:
-            return bid

@@ -242,7 +242,7 @@ class TenderCancellationResourceTest(BaseTenderContentWebTest):
 class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
     initial_auth = ('Basic', ('broker', ''))
     initial_bids = test_bids * 2
-    bid_visible_fields = [u'status', u'documents', u'tenderers', u'id', u'eligibilityDocuments']
+    bid_visible_fields = [u'status', u'documents', u'tenderers', u'id']
     doc_id_by_type = {}
     valid_bids = []
 
@@ -282,7 +282,7 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
     def _prepare_bids_docs(self):
         doc_id_by_type = {}
         for bid_id, bid_token in self.initial_bids_tokens.items():
-            for doc_resource in ['documents', 'financial_documents', 'eligibility_documents', 'qualification_documents']:
+            for doc_resource in ['documents', 'financial_documents']:
                 response = self.app.post('/tenders/{}/bids/{}/{}?acc_token={}'.format(
                     self.tender_id, bid_id, doc_resource, bid_token), upload_files=[('file', 'name_{}.doc'.format(doc_resource[:-1]), 'content')])
                 doc_id = response.json["data"]['id']
@@ -319,7 +319,7 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
         self.assertEqual(len(qualifications), 3)
         offset = 0 if qualify_all else 1
         for qualification in qualifications[offset:]:
-            response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification['id'], self.tender_token), {"data": {"status": "active", "qualified": True, "eligible": True}})
+            response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification['id'], self.tender_token), {"data": {"status": "active"}})
             self.assertEqual(response.status, "200 OK")
 
         if offset:
@@ -334,7 +334,7 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
         self.app.authorization = orig_authorization
 
     def _all_documents_are_not_accessible(self, bid_id):
-        for doc_resource in ['documents', 'eligibility_documents', 'financial_documents', 'qualification_documents']:
+        for doc_resource in ['documents', 'financial_documents']:
             response = self.app.get('/tenders/{}/bids/{}/{}'.format(self.tender_id, bid_id, doc_resource), status=403)
             self.assertEqual(response.status, '403 Forbidden')
             self.assertIn("Can\'t view bid documents in current (", response.json['errors'][0]["description"])
@@ -352,14 +352,14 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
             if bid_id in self.valid_bids:
                 self.assertEqual(set(bid_data.keys()), set(self.bid_visible_fields))
 
-                for doc_resource in ['documents', 'eligibility_documents']:
+                for doc_resource in ['documents']:
                     response = self.app.get('/tenders/{}/bids/{}/{}'.format(self.tender_id, bid_id, doc_resource))
                     docs = response.json['data']
                     self.assertEqual(len(docs), 1)
                     self.assertEqual(docs[0]['title'], "name_{}.doc".format(doc_resource[:-1]))
                     self.assertIn('url', docs[0])
 
-                for doc_resource in ['financial_documents', 'qualification_documents']:
+                for doc_resource in ['financial_documents']:
                     response = self.app.get('/tenders/{}/bids/{}/{}'.format(self.tender_id, bid_id, doc_resource), status=403)
                     self.assertEqual(response.status, '403 Forbidden')
                     self.assertEqual(response.json['errors'][0]["description"], "Can\'t view bid documents in current (invalid.pre-qualification) bid status")
@@ -410,7 +410,6 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
 
     def test_bids_on_tender_cancellation_in_pre_qualification(self):
         self._mark_one_bid_deleted()
-
         # leave one bid invalidated
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(self.tender_id, self.tender_token), {"data": {"description": "2 b | !2 b"}})
         for bid_id in self.valid_bids:
@@ -502,9 +501,9 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
 
     def test_bids_on_tender_cancellation_in_qualification(self):
         self.bid_visible_fields = [
-            u'status', u'documents', u'tenderers', u'id', u'selfQualified',
-            u'eligibilityDocuments', u'selfEligible', u'value', u'date',
-            u'financialDocuments', u'participationUrl', u'qualificationDocuments'
+            u'status', u'documents', u'tenderers', u'id',
+            u'value', u'date',
+            u'financialDocuments', u'participationUrl'
         ]
         deleted_bid_id = self._mark_one_bid_deleted()
 
@@ -537,8 +536,8 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
             else:
                 self.assertEqual(bid["status"], 'unsuccessful')
                 self.assertEqual(set(bid.keys()), set([
-                    u'documents', u'eligibilityDocuments', u'id', u'status',
-                    u'selfEligible', u'tenderers', u'selfQualified',
+                    u'documents', u'id', u'status',
+                    u'tenderers'
                 ]))
 
         for bid_id, bid_token in self.initial_bids_tokens.items():
@@ -548,26 +547,26 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
             if bid_id in self.valid_bids:
                 self.assertEqual(set(bid_data.keys()), set(self.bid_visible_fields))
 
-                for doc_resource in ['documents', 'eligibility_documents', 'financial_documents', 'qualification_documents']:
+                for doc_resource in ['documents','financial_documents']:
                     self._bid_document_is_accessible(bid_id, doc_resource)
             elif bid_id == deleted_bid_id:
                 self._all_documents_are_not_accessible(bid_id)
             else:  # unsuccessful bid
-                for doc_resource in ['financial_documents', 'qualification_documents']:
+                for doc_resource in ['financial_documents']:
                     response = self.app.get('/tenders/{}/bids/{}/{}'.format(self.tender_id, bid_id, doc_resource), status=403)
                     self.assertEqual(response.status, '403 Forbidden')
                     self.assertIn("Can\'t view bid documents in current (", response.json['errors'][0]["description"])
                     response = self.app.get('/tenders/{}/bids/{}/{}/{}'.format(self.tender_id, bid_id, doc_resource, self.doc_id_by_type[bid_id + doc_resource]['id']), status=403)
                     self.assertEqual(response.status, '403 Forbidden')
                     self.assertIn("Can\'t view bid documents in current (", response.json['errors'][0]["description"])
-                for doc_resource in ['documents', 'eligibility_documents']:
+                for doc_resource in ['documents' ]:
                     self._bid_document_is_accessible(bid_id, doc_resource)
 
     def test_bids_on_tender_cancellation_in_awarded(self):
         self.bid_visible_fields = [
-            u'status', u'documents', u'tenderers', u'id', u'selfQualified',
-            u'eligibilityDocuments', u'selfEligible', u'value', u'date',
-            u'financialDocuments', u'participationUrl', u'qualificationDocuments'
+            u'status', u'documents', u'tenderers', u'id',
+            u'value', u'date',
+            u'financialDocuments', u'participationUrl'
         ]
         self._mark_one_bid_deleted()
 
@@ -591,7 +590,7 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
         response = self.app.get('/tenders/{}/awards?acc_token={}'.format(self.tender_id, self.tender_token))
         award_id = [i['id'] for i in response.json['data'] if i['status'] == 'pending'][0]
         self.app.patch_json('/tenders/{}/awards/{}?acc_token={}'.format(self.tender_id, award_id, self.tender_token),
-                            {"data": {"status": "active", "qualified": True, "eligible": True}})
+                            {"data": {"status": "active"}})
         self.assertEqual(response.status, "200 OK")
 
         response = self.app.get('/tenders/{}'.format(self.tender_id), {"data": {"id": self.tender_id}})
@@ -615,7 +614,7 @@ class TenderCancellationBidsAvailabilityTest(BaseTenderContentWebTest):
             if bid_id in self.valid_bids:
                 self.assertEqual(set(bid_data.keys()), set(self.bid_visible_fields))
 
-                for doc_resource in ['documents', 'eligibility_documents', 'financial_documents', 'qualification_documents']:
+                for doc_resource in ['documents', 'financial_documents']:
                     self._bid_document_is_accessible(bid_id, doc_resource)
 
 class TenderLotCancellationResourceTest(BaseTenderContentWebTest):
@@ -805,7 +804,7 @@ class TenderAwardsCancellationResourceTest(BaseTenderContentWebTest):
         response = self.app.get('/tenders/{}/qualifications'.format(self.tender_id))
         qualification_id = [i['id'] for i in response.json['data'] if i['status'] == 'pending' and i['lotID'] == self.initial_lots[0]['id']][0]
         response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification_id, self.tender_token),
-                                       {"data": {"status": "active", "qualified": True, "eligible": True}})
+                                       {"data": {"status": "active"}})
 
         response = self.app.post_json('/tenders/{}/cancellations?acc_token={}'.format(self.tender_id, self.tender_token), {'data': {
             'reason': 'cancellation reason',
@@ -843,12 +842,12 @@ class TenderAwardsCancellationResourceTest(BaseTenderContentWebTest):
         response = self.app.get('/tenders/{}/qualifications'.format(self.tender_id))
         qualification_id = [i['id'] for i in response.json['data'] if i['status'] == 'pending' and i['lotID'] == self.initial_lots[0]['id']][0]
         response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification_id, self.tender_token),
-                                       {"data": {"status": "unsuccessful", "qualified": True, "eligible": True}})
+                                       {"data": {"status": "unsuccessful"}})
 
         response = self.app.get('/tenders/{}/qualifications'.format(self.tender_id))
         qualification_id = [i['id'] for i in response.json['data'] if i['status'] == 'pending' and i['lotID'] == self.initial_lots[0]['id']][0]
         response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification_id, self.tender_token),
-                                       {"data": {"status": "unsuccessful", "qualified": True, "eligible": True}})
+                                       {"data": {"status": "unsuccessful"}})
 
         response = self.app.post_json('/tenders/{}/cancellations?acc_token={}'.format(self.tender_id, self.tender_token), {'data': {
             'reason': 'cancellation reason',
@@ -892,7 +891,7 @@ class TenderAwardsCancellationResourceTest(BaseTenderContentWebTest):
         self.app.authorization = ('Basic', ('token', ''))
         for qualification in response.json['data']:
             response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification['id'], self.tender_token),
-                                           {"data": {"status": "active", "qualified": True, "eligible": True}})
+                                           {"data": {"status": "active"}})
             self.assertEqual(response.status, "200 OK")
 
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(
@@ -920,7 +919,7 @@ class TenderAwardsCancellationResourceTest(BaseTenderContentWebTest):
         response = self.app.get('/tenders/{}/awards'.format(self.tender_id))
         award_id = [i['id'] for i in response.json['data'] if i['status'] == 'pending' and i['lotID'] == self.initial_lots[0]['id']][0]
         response = self.app.patch_json('/tenders/{}/awards/{}?acc_token={}'.format(self.tender_id, award_id, self.tender_token),
-                                       {"data": {"status": "active", "qualified": True, "eligible": True}})
+                                       {"data": {"status": "active"}})
 
         response = self.app.post_json('/tenders/{}/cancellations?acc_token={}'.format(self.tender_id, self.tender_token), {'data': {
             'reason': 'cancellation reason',
@@ -958,7 +957,7 @@ class TenderAwardsCancellationResourceTest(BaseTenderContentWebTest):
         self.app.authorization = ('Basic', ('token', ''))
         for qualification in response.json['data']:
             response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification['id'], self.tender_token),
-                                           {"data": {"status": "active", "qualified": True, "eligible": True}})
+                                           {"data": {"status": "active"}})
             self.assertEqual(response.status, "200 OK")
 
         response = self.app.patch_json('/tenders/{}?acc_token={}'.format(

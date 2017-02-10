@@ -10,20 +10,18 @@ from openprocurement.api.utils import (
     remove_draft_bids
 )
 from openprocurement.tender.openua.utils import (
-    check_complaint_status, has_unanswered_questions, has_unanswered_complaints
+    check_complaint_status,
 )
 from openprocurement.tender.twostage.models import Qualification
 from openprocurement.tender.twostage.traversal import (
     qualifications_factory, bid_financial_documents_factory,
-    bid_eligibility_documents_factory, bid_qualification_documents_factory)
+)
 from barbecue import chef
 
 LOGGER = getLogger(__name__)
 
 qualifications_resource = partial(resource, error_handler=error_handler, factory=qualifications_factory)
 bid_financial_documents_resource = partial(resource, error_handler=error_handler, factory=bid_financial_documents_factory)
-bid_eligibility_documents_resource = partial(resource, error_handler=error_handler, factory=bid_eligibility_documents_factory)
-bid_qualification_documents_resource = partial(resource, error_handler=error_handler, factory=bid_qualification_documents_factory)
 
 
 def check_initial_bids_count(request):
@@ -107,8 +105,7 @@ def check_status(request):
     tender = request.validated['tender']
     now = get_now()
 
-    if tender.status == 'active.tendering' and tender.tenderPeriod.endDate <= now and \
-            not has_unanswered_complaints(tender) and not has_unanswered_questions(tender):
+    if tender.status == 'active.tendering' and tender.tenderPeriod.endDate <= now:
         for complaint in tender.complaints:
             check_complaint_status(request, complaint)
         LOGGER.info('Switched tender {} to {}'.format(tender['id'], 'active.pre-qualification'),

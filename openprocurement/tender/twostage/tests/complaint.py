@@ -9,7 +9,7 @@ from openprocurement.tender.twostage.tests.base import (
 
 author = test_bids[0]["tenderers"][0]
 
-
+@unittest.skip('complaints not implemented')
 class TenderComplaintResourceTest(BaseTenderContentWebTest):
 
     initial_auth = ('Basic', ('broker', ''))
@@ -301,103 +301,8 @@ class TenderComplaintResourceTest(BaseTenderContentWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['errors'][0]["description"], "Can't update complaint in current (complete) tender status")
 
-    def test_review_tender_complaint(self):
-        for status in ['invalid', 'satisfied', 'declined']:
-            self.app.authorization = ('Basic', ('token', ''))
-            response = self.app.post_json('/tenders/{}/complaints'.format(self.tender_id), {'data': {
-                'title': 'complaint title',
-                'description': 'complaint description',
-                'author': author,
-                'status': 'pending'
-            }})
-            self.assertEqual(response.status, '201 Created')
-            self.assertEqual(response.content_type, 'application/json')
-            complaint = response.json['data']
 
-            self.app.authorization = ('Basic', ('reviewer', ''))
-            response = self.app.patch_json('/tenders/{}/complaints/{}'.format(self.tender_id, complaint['id']), {"data": {
-                "decision": '{} complaint'.format(status)
-            }})
-            self.assertEqual(response.status, '200 OK')
-            self.assertEqual(response.content_type, 'application/json')
-            self.assertEqual(response.json['data']["decision"], '{} complaint'.format(status))
-
-            if status != "invalid":
-                response = self.app.patch_json('/tenders/{}/complaints/{}'.format(self.tender_id, complaint['id']), {"data": {
-                    "status": "accepted"
-                }})
-                self.assertEqual(response.status, '200 OK')
-                self.assertEqual(response.content_type, 'application/json')
-                self.assertEqual(response.json['data']["status"], "accepted")
-
-                response = self.app.patch_json('/tenders/{}/complaints/{}'.format(self.tender_id, complaint['id']), {"data": {
-                    "decision": 'accepted:{} complaint'.format(status)
-                }})
-                self.assertEqual(response.status, '200 OK')
-                self.assertEqual(response.content_type, 'application/json')
-                self.assertEqual(response.json['data']["decision"], 'accepted:{} complaint'.format(status))
-
-            response = self.app.patch_json('/tenders/{}/complaints/{}'.format(self.tender_id, complaint['id']), {"data": {
-                "status": status
-            }})
-            self.assertEqual(response.status, '200 OK')
-            self.assertEqual(response.content_type, 'application/json')
-            self.assertEqual(response.json['data']["status"], status)
-
-    def test_get_tender_complaint(self):
-        response = self.app.post_json('/tenders/{}/complaints'.format(
-            self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': author}})
-        self.assertEqual(response.status, '201 Created')
-        self.assertEqual(response.content_type, 'application/json')
-        complaint = response.json['data']
-        del complaint['author']
-
-        response = self.app.get('/tenders/{}/complaints/{}'.format(self.tender_id, complaint['id']))
-        self.assertEqual(response.status, '200 OK')
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.json['data'], complaint)
-
-        response = self.app.get('/tenders/{}/complaints/some_id'.format(self.tender_id), status=404)
-        self.assertEqual(response.status, '404 Not Found')
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.json['status'], 'error')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'Not Found', u'location':
-                u'url', u'name': u'complaint_id'}
-        ])
-
-        response = self.app.get('/tenders/some_id/complaints/some_id', status=404)
-        self.assertEqual(response.status, '404 Not Found')
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.json['status'], 'error')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'Not Found', u'location':
-                u'url', u'name': u'tender_id'}
-        ])
-
-    def test_get_tender_complaints(self):
-        response = self.app.post_json('/tenders/{}/complaints'.format(
-            self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': author}})
-        self.assertEqual(response.status, '201 Created')
-        self.assertEqual(response.content_type, 'application/json')
-        complaint = response.json['data']
-        del complaint['author']
-
-        response = self.app.get('/tenders/{}/complaints'.format(self.tender_id))
-        self.assertEqual(response.status, '200 OK')
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.json['data'][0], complaint)
-
-        response = self.app.get('/tenders/some_id/complaints', status=404)
-        self.assertEqual(response.status, '404 Not Found')
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.json['status'], 'error')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'Not Found', u'location':
-                u'url', u'name': u'tender_id'}
-        ])
-
-
+@unittest.skip('complaints not implemented')
 class TenderLotAwardComplaintResourceTest(BaseTenderContentWebTest):
     initial_lots = test_lots
 
@@ -460,18 +365,10 @@ class TenderLotAwardComplaintResourceTest(BaseTenderContentWebTest):
         self.assertEqual(response.json['errors'][0]["description"], "Can't add complaint in current (unsuccessful) tender status")
 
 
+@unittest.skip('complaints not implemented')
 class TenderComplaintDocumentResourceTest(BaseTenderContentWebTest):
 
     initial_auth = ('Basic', ('broker', ''))
-    def setUp(self):
-        super(TenderComplaintDocumentResourceTest, self).setUp()
-        # Create complaint
-        response = self.app.post_json('/tenders/{}/complaints'.format(
-            self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': author}})
-        complaint = response.json['data']
-        self.complaint_id = complaint['id']
-        self.complaint_owner_token = response.json['access']['token']
-
     def test_not_found(self):
         response = self.app.post('/tenders/some_id/complaints/some_id/documents', status=404, upload_files=[
                                  ('file', 'name.doc', 'content')])
@@ -764,6 +661,30 @@ class TenderComplaintDocumentResourceTest(BaseTenderContentWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['errors'][0]["description"], "Can't update document in current (complete) tender status")
 
+
+class ComplaintResourceTest(BaseTenderContentWebTest):
+    initial_auth = ('Basic', ('broker', ''))
+    initial_lots = test_lots
+
+    def test_tender_complaint(self):
+        response = self.app.post_json('/tenders/{}/complaints'.format(
+            self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': author, 'status': 'claim'}}, status = 400)
+        self.assertEqual(response.status, '400 Bad Request')
+        self.assertEqual(response.json['errors'],
+        [{u'description': u'Complaint addition not implemented', u'location': u'body', u'name': u'data'}])
+
+    def test_tender_lot_complaint(self):
+        response = self.app.post_json('/tenders/{}/complaints'.format(self.tender_id), {'data': {
+            'title': 'complaint title',
+            'description': 'complaint description',
+            'author': author,
+            'relatedLot': self.initial_lots[0]['id'],
+            'status': 'claim'
+        }}, status = 400)
+        self.assertEqual(response.status, '400 Bad Request')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['errors'],
+        [{u'description': u'Complaint addition not implemented', u'location': u'body', u'name': u'data'}])
 
 def suite():
     suite = unittest.TestSuite()

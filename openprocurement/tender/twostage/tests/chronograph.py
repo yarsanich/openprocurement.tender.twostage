@@ -19,7 +19,6 @@ class TenderSwitchPreQualificationResourceTest(BaseTenderContentWebTest):
         self.assertEqual(response.json['data']["status"], "active.pre-qualification")
 
 
-
 class TenderSwitchAuctionResourceTest(BaseTenderContentWebTest):
     initial_status = 'active.pre-qualification.stand-still'
     initial_bids = test_bids
@@ -31,7 +30,6 @@ class TenderSwitchAuctionResourceTest(BaseTenderContentWebTest):
         for qualification in qualifications:
             response = self.app.patch_json('/tenders/{}/qualifications/{}?acc_token={}'.format(self.tender_id, qualification['id'], self.tender_token),
                                           {"data": {'status': 'active'}})
-
         response = self.set_status('active.auction', {'status': 'active.pre-qualification.stand-still'})
 
         self.app.authorization = ('Basic', ('chronograph', ''))
@@ -123,7 +121,7 @@ class TenderAuctionPeriodResourceTest(BaseTenderContentWebTest):
 #         self.assertEqual(response.status, '200 OK')
 #         self.assertNotIn('auctionPeriod', response.json['data']["lots"][0])
 
-
+@unittest.skip('Complaint not implemented')
 class TenderComplaintSwitchResourceTest(BaseTenderContentWebTest):
     initial_bids = test_bids
 
