@@ -37,8 +37,6 @@ class TenderCancellationResource(BaseResource):
                 if tender.status == "active.tendering":
                     bid.documents = [i for i in bid.documents if i.documentOf != 'lot' or i.relatedItem not in cancelled_lots]
                 bid.financialDocuments = [i for i in bid.financialDocuments if i.documentOf != 'lot' or i.relatedItem not in cancelled_lots]
-                bid.eligibilityDocuments = [i for i in bid.eligibilityDocuments if i.documentOf != 'lot' or i.relatedItem not in cancelled_lots]
-                bid.qualificationDocuments = [i for i in bid.qualificationDocuments if i.documentOf != 'lot' or i.relatedItem not in cancelled_lots]
                 bid.parameters = [i for i in bid.parameters if i.code not in cancelled_features]
                 bid.lotValues = [i for i in bid.lotValues if i.relatedLot not in cancelled_lots]
                 if not bid.lotValues:

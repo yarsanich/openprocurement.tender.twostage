@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from openprocurement.api.models import get_now
 from openprocurement.api.views.tender import TenderResource
-from openprocurement.tender.twostage.models import PREQUALIFICATION_COMPLAINT_STAND_STILL as COMPLAINT_STAND_STILL
+from openprocurement.tender.twostage.models import PREQUALIFICATION_COMPLAINT_STAND_STILL as COMPLAINT_STAND_STILL, TENDERING_EXTRA_PERIOD
 from openprocurement.tender.twostage.utils import check_status, all_bids_are_reviewed
-from openprocurement.tender.openua.models import TENDERING_EXTRA_PERIOD, calculate_normalized_date
+from openprocurement.tender.openua.models import calculate_normalized_date
 from openprocurement.tender.openua.utils import calculate_business_date
 from openprocurement.tender.openua.validation import validate_patch_tender_ua_data
 from openprocurement.api.utils import (

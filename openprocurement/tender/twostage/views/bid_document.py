@@ -16,8 +16,7 @@ from openprocurement.api.validation import (
     validate_patch_document_data,
 )
 from openprocurement.tender.twostage.utils import (
-    bid_financial_documents_resource, bid_eligibility_documents_resource,
-    bid_qualification_documents_resource,
+    bid_financial_documents_resource,
 )
 from openprocurement.tender.openua.views.bid_document import TenderUaBidDocumentResource
 
@@ -203,24 +202,4 @@ class TenderTSBidFinancialDocumentResource(TenderTSBidDocumentResource):
                              'active.pre-qualification.stand-still', 'active.auction']
     view_forbidden_bid_states = ['invalid', 'deleted', 'invalid.pre-qualification', 'unsuccessful']
 
-@bid_eligibility_documents_resource(name='Tender Two Stage Bid Eligibility Documents',
-    collection_path='/tenders/{tender_id}/bids/{bid_id}/eligibility_documents',
 
-    path='/tenders/{tender_id}/bids/{bid_id}/eligibility_documents/{document_id}',
-    procurementMethodType='aboveThresholdTS',
-    description="Tender Two Stagebidder eligibility documents")
-class TenderTSBidEligibilityDocumentResource(TenderTSBidFinancialDocumentResource):
-    """ Tender Two Stage Bid Eligibility Documents """
-    container = "eligibilityDocuments"
-    view_forbidden_states = ['active.tendering']
-    view_forbidden_bid_states = ['invalid', 'deleted']
-
-
-@bid_qualification_documents_resource(name='Tender Two Stage Bid Qualification Documents',
-    collection_path='/tenders/{tender_id}/bids/{bid_id}/qualification_documents',
-    path='/tenders/{tender_id}/bids/{bid_id}/qualification_documents/{document_id}',
-    procurementMethodType='aboveThresholdTS',
-    description="Tender Two Stage bidder qualification documents")
-class TenderTSBidQualificationDocumentResource(TenderTSBidFinancialDocumentResource):
-    """ Tender Two StageBid Qualification Documents """
-    container = "qualificationDocuments"

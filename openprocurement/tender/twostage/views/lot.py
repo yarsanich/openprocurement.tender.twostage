@@ -7,10 +7,12 @@ from openprocurement.api.utils import (
     json_view,
     context_unpack,
     get_now,
+    calculate_business_date
 )
 from openprocurement.api.validation import (
     validate_lot_data,
 )
+from openprocurement.tender.twostage.models import TENDERING_EXTRA_PERIOD
 
 
 @opresource(name='Tender Two Stage Lots',
@@ -19,6 +21,17 @@ from openprocurement.api.validation import (
             procurementMethodType='aboveThresholdTS',
             description="Tender Two Stage lots")
 class TenderTSLotResource(TenderLotResource):
+    def validate_update_tender(self, operation):
+        tender = self.request.validated['tender']
+        if tender.status not in ['active.tendering']:
+            self.request.errors.add('body', 'data', 'Can\'t {} lot in current ({}) tender status'.format(operation, tender.status))
+            self.request.errors.status = 403
+            return
+        if calculate_business_date(get_now(), TENDERING_EXTRA_PERIOD, tender) > tender.tenderPeriod.endDate:
+            self.request.errors.add('body', 'data', 'tenderPeriod should be extended by {0.days} days'.format(TENDERING_EXTRA_PERIOD))
+            self.request.errors.status = 403
+            return
+        return True
 
     @json_view(content_type="application/json", validators=(validate_lot_data,), permission='edit_tender')
     def collection_post(self):
