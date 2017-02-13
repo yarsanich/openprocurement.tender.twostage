@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
-
+import iso8601
+from datetime import timedelta
 from openprocurement.api.tests.base import test_organization
 from openprocurement.tender.twostage.tests.base import (
     BaseTenderContentWebTest,
@@ -189,6 +190,11 @@ class TenderAwardResourceTest(BaseTenderContentWebTest):
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['data']['status'], u'active')
+        complaintPeriod = {
+            "startDate": iso8601.parse_date(response.json['data']['complaintPeriod']['startDate']),
+            "endDate": iso8601.parse_date(response.json['data']['complaintPeriod']['endDate'])
+        }
+        self.assertEqual(complaintPeriod['endDate'] - complaintPeriod['startDate'], timedelta(seconds=4))
 
         response = self.app.get('/tenders/{}'.format(self.tender_id))
         self.assertEqual(response.status, '200 OK')
