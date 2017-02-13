@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import timedelta
 from openprocurement.api.utils import opresource, json_view, apply_patch, save_tender, context_unpack
 from openprocurement.api.models import get_now
 from openprocurement.tender.openua.views.award import TenderUaAwardResource as BaseResource
@@ -89,7 +90,7 @@ class TenderAwardResource(BaseResource):
         award_status = award.status
         apply_patch(self.request, save=False, src=self.request.context.serialize())
         if award_status == 'pending' and award.status == 'active':
-            normalized_end = calculate_normalized_date(get_now(), tender, True)
+            normalized_end = award.complaintPeriod.startDate + timedelta(seconds = 3)
             award.complaintPeriod.endDate = calculate_business_date(normalized_end, STAND_STILL_TIME, tender)
             tender.contracts.append(type(tender).contracts.model_class({
                 'awardID': award.id,

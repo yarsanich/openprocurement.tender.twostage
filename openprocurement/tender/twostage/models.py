@@ -595,8 +595,7 @@ class Tender(BaseTender):
 
     @serializable(type=ModelType(Period))
     def complaintPeriod(self):
-        normalized_end = calculate_normalized_date(self.tenderPeriod.startDate + timedelta(seconds = 3), self)
-        return Period(dict(startDate=self.tenderPeriod.startDate, endDate=calculate_business_date(normalized_end, COMPLAINT_SUBMIT_TIME, self)))
+        return Period(dict(startDate=self.tenderPeriod.startDate, endDate=calculate_business_date(self.tenderPeriod.startDate + timedelta(seconds = 3), COMPLAINT_SUBMIT_TIME, self)))
 
     @serializable(serialize_when_none=False)
     def next_check(self):
