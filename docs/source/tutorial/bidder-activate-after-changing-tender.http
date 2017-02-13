@@ -1,0 +1,98 @@
+PATCH /api/2.3/tenders/634f162a52544f1285269e6c75a350bb/bids/be8f9392b5564a6690713d9f69a62e59?acc_token=d80a2f81e8104124813ae413464415aa HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 31
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "status": "pending"
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "status": "pending", 
+    "documents": [
+      {
+        "confidentiality": "public", 
+        "language": "uk", 
+        "title": "Proposal.pdf", 
+        "url": "http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/bids/be8f9392b5564a6690713d9f69a62e59/documents/e5a8fb1ce67f46c39347ecc4e4258a6f?download=3992f11069c5463ea021e4a17ef1d430", 
+        "format": "application/pdf", 
+        "documentOf": "tender", 
+        "datePublished": "2017-02-13T17:51:00.210078+02:00", 
+        "id": "e5a8fb1ce67f46c39347ecc4e4258a6f", 
+        "dateModified": "2017-02-13T17:51:00.210105+02:00"
+      }, 
+      {
+        "confidentiality": "buyerOnly", 
+        "language": "uk", 
+        "title": "Proposal_top_secrets.pdf", 
+        "url": "http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/bids/be8f9392b5564a6690713d9f69a62e59/documents/8ae6309aae404e339f695a103484d1e4?download=15435c63b35841409dad1307ec5fade7", 
+        "confidentialityRationale": "Only our company sells badgers with pink hair.", 
+        "format": "application/pdf", 
+        "documentOf": "tender", 
+        "datePublished": "2017-02-13T17:51:00.324355+02:00", 
+        "id": "8ae6309aae404e339f695a103484d1e4", 
+        "dateModified": "2017-02-13T17:51:00.324387+02:00"
+      }
+    ], 
+    "value": {
+      "currency": "UAH", 
+      "amount": 500.0, 
+      "valueAddedTaxIncluded": true
+    }, 
+    "financialDocuments": [
+      {
+        "confidentiality": "public", 
+        "language": "uk", 
+        "title": "financial_doc.pdf", 
+        "url": "http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/bids/be8f9392b5564a6690713d9f69a62e59/financial_documents/c76e14003f084345b1f2d976af5e43a8?download=a436b3a7326d4a0780ac71e862642b8d", 
+        "format": "application/pdf", 
+        "documentOf": "tender", 
+        "datePublished": "2017-02-13T17:51:00.558237+02:00", 
+        "id": "c76e14003f084345b1f2d976af5e43a8", 
+        "dateModified": "2017-02-13T17:51:00.558264+02:00"
+      }, 
+      {
+        "confidentiality": "public", 
+        "language": "uk", 
+        "title": "financial_doc2.pdf", 
+        "url": "http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/bids/be8f9392b5564a6690713d9f69a62e59/financial_documents/2a82d2776ebc4245b9338b8626280934?download=c9982ce04fbd47c9941550e702a1a318", 
+        "format": "application/pdf", 
+        "documentOf": "tender", 
+        "datePublished": "2017-02-13T17:51:00.685375+02:00", 
+        "id": "2a82d2776ebc4245b9338b8626280934", 
+        "dateModified": "2017-02-13T17:51:00.685402+02:00"
+      }
+    ], 
+    "tenderers": [
+      {
+        "contactPoint": {
+          "email": "soleksuk@gmail.com", 
+          "telephone": "+380 (432) 21-69-30", 
+          "name": "Сергій Олексюк"
+        }, 
+        "identifier": {
+          "scheme": "UA-EDR", 
+          "id": "00137256", 
+          "uri": "http://www.sc.gov.ua/"
+        }, 
+        "name": "ДКП «Школяр»", 
+        "address": {
+          "postalCode": "21100", 
+          "countryName": "Україна", 
+          "streetAddress": "вул. Островського, 33", 
+          "region": "м. Вінниця", 
+          "locality": "м. Вінниця"
+        }
+      }
+    ], 
+    "date": "2017-02-13T17:50:59.987207+02:00", 
+    "id": "be8f9392b5564a6690713d9f69a62e59"
+  }
+}
+

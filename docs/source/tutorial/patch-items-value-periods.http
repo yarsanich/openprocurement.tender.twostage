@@ -1,0 +1,155 @@
+PATCH /api/2.3/tenders/634f162a52544f1285269e6c75a350bb?acc_token=d36e5cfa2007401ba202822aa162c0d6 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 75
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "tenderPeriod": {
+      "endDate": "2017-03-15T17:51:08.506085+02:00"
+    }
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "procurementMethod": "open", 
+    "complaintPeriod": {
+      "startDate": "2017-02-13T17:50:58.383693+02:00", 
+      "endDate": "2017-02-13T17:51:02.383693+02:00"
+    }, 
+    "enquiryPeriod": {
+      "startDate": "2017-02-13T17:50:58.383693+02:00", 
+      "clarificationsUntil": "2017-03-17T17:51:08.506085+02:00", 
+      "endDate": "2017-03-14T17:51:08.506085+02:00", 
+      "invalidationDate": "2017-02-13T17:50:58.586574+02:00"
+    }, 
+    "submissionMethod": "electronicAuction", 
+    "operator": "ua", 
+    "next_check": "2017-03-15T17:51:08.506085+02:00", 
+    "procuringEntity": {
+      "kind": "general", 
+      "name": "ЗОСШ #10 м.Вінниці", 
+      "address": {
+        "postalCode": "21027", 
+        "countryName": "Україна", 
+        "streetAddress": "вул. Стахурського. 22", 
+        "region": "м. Вінниця", 
+        "locality": "м. Вінниця"
+      }, 
+      "contactPoint": {
+        "url": "http://sch10.edu.vn.ua/", 
+        "name_en": "Kutsa Svitlana V.", 
+        "name": "Куца Світлана Валентинівна", 
+        "availableLanguage": "uk", 
+        "telephone": "+380 (432) 46-53-02"
+      }, 
+      "identifier": {
+        "scheme": "UA-EDR", 
+        "legalName_en": "The institution \"Secondary school I-III levels № 10 Vinnitsa City Council\"", 
+        "id": "21725150", 
+        "legalName": "Заклад \"Загальноосвітня школа І-ІІІ ступенів № 10 Вінницької міської ради\""
+      }, 
+      "name_en": "School #10 of Vinnytsia"
+    }, 
+    "owner": "broker", 
+    "title_en": "Services in school canteens", 
+    "id": "634f162a52544f1285269e6c75a350bb", 
+    "title": "Послуги шкільних їдалень", 
+    "tenderID": "R-UA-2017-02-13-000001", 
+    "dateModified": "2017-02-13T17:50:58.589995+02:00", 
+    "status": "active.tendering", 
+    "tenderPeriod": {
+      "startDate": "2017-02-13T17:50:58.383693+02:00", 
+      "endDate": "2017-03-15T17:51:08.506085+02:00"
+    }, 
+    "auctionPeriod": {
+      "shouldStartAfter": "2017-03-18T00:00:00+02:00"
+    }, 
+    "procurementMethodType": "aboveThresholdTS", 
+    "date": "2017-02-13T17:50:58.384301+02:00", 
+    "minimalStep": {
+      "currency": "UAH", 
+      "amount": 35.0, 
+      "valueAddedTaxIncluded": true
+    }, 
+    "items": [
+      {
+        "description": "Послуги шкільних їдалень", 
+        "classification": {
+          "scheme": "CPV", 
+          "description": "Test", 
+          "id": "37810000-9"
+        }, 
+        "description_en": "Services in school canteens", 
+        "additionalClassifications": [
+          {
+            "scheme": "ДКПП", 
+            "id": "17.21.1", 
+            "description": "Послуги шкільних їдалень"
+          }
+        ], 
+        "deliveryAddress": {
+          "countryName": "Україна", 
+          "postalCode": "79000", 
+          "streetAddress": "вул. Банкова 1", 
+          "region": "м. Київ", 
+          "locality": "м. Київ"
+        }, 
+        "deliveryDate": {
+          "startDate": "2017-03-05T17:50:55.851203+02:00", 
+          "endDate": "2017-04-04T17:50:55.851276+02:00"
+        }, 
+        "id": "eb8797422b4f4af89e2d8575fec37101", 
+        "unit": {
+          "code": "44617100-9", 
+          "name": "item"
+        }, 
+        "quantity": 1
+      }, 
+      {
+        "description": "Послуги шкільних їдалень", 
+        "classification": {
+          "scheme": "CPV", 
+          "description": "Test", 
+          "id": "37810000-9"
+        }, 
+        "description_en": "Services in school canteens", 
+        "additionalClassifications": [
+          {
+            "scheme": "ДКПП", 
+            "id": "17.21.1", 
+            "description": "Послуги шкільних їдалень"
+          }
+        ], 
+        "deliveryAddress": {
+          "countryName": "Україна", 
+          "postalCode": "79000", 
+          "streetAddress": "вул. Банкова 1", 
+          "region": "м. Київ", 
+          "locality": "м. Київ"
+        }, 
+        "deliveryDate": {
+          "startDate": "2017-03-05T17:50:55.851310+02:00", 
+          "endDate": "2017-04-04T17:50:55.851334+02:00"
+        }, 
+        "id": "5733fc85184c41feafa8c8b93dc9de21", 
+        "unit": {
+          "code": "44617100-9", 
+          "name": "item"
+        }, 
+        "quantity": 1
+      }
+    ], 
+    "value": {
+      "currency": "UAH", 
+      "amount": 500.0, 
+      "valueAddedTaxIncluded": true
+    }, 
+    "awardCriteria": "lowestCost"
+  }
+}
+

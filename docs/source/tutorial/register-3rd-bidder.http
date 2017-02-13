@@ -1,0 +1,78 @@
+POST /api/2.3/tenders/634f162a52544f1285269e6c75a350bb/bids HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 682
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "value": {
+      "amount": 5
+    }, 
+    "tenderers": [
+      {
+        "contactPoint": {
+          "telephone": "+380 (322) 12-34-56", 
+          "name": "Іван Іваненко", 
+          "email": "fake@mail.com"
+        }, 
+        "identifier": {
+          "scheme": "UA-EDR", 
+          "id": "00137226", 
+          "uri": "http://www.sc.gov.ua/"
+        }, 
+        "name": "«Снігур»", 
+        "address": {
+          "countryName": "Україна", 
+          "postalCode": "79013", 
+          "region": "м. Львів", 
+          "streetAddress": "вул. Островського, 35", 
+          "locality": "м. Львів"
+        }
+      }
+    ]
+  }
+}
+
+Response: 201 Created
+Content-Type: application/json; charset=UTF-8
+Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/bids/9f5461dad05148299ab1396e5fc40fb6
+{
+  "access": {
+    "transfer": "2f842183e7034243876abad5c97fd171", 
+    "token": "01cc0dc97206471687a6e91e811cc4c9"
+  }, 
+  "data": {
+    "date": "2017-02-13T17:51:01.451032+02:00", 
+    "status": "pending", 
+    "id": "9f5461dad05148299ab1396e5fc40fb6", 
+    "value": {
+      "currency": "UAH", 
+      "amount": 5.0, 
+      "valueAddedTaxIncluded": true
+    }, 
+    "tenderers": [
+      {
+        "contactPoint": {
+          "email": "fake@mail.com", 
+          "telephone": "+380 (322) 12-34-56", 
+          "name": "Іван Іваненко"
+        }, 
+        "identifier": {
+          "scheme": "UA-EDR", 
+          "id": "00137226", 
+          "uri": "http://www.sc.gov.ua/"
+        }, 
+        "name": "«Снігур»", 
+        "address": {
+          "postalCode": "79013", 
+          "countryName": "Україна", 
+          "streetAddress": "вул. Островського, 35", 
+          "region": "м. Львів", 
+          "locality": "м. Львів"
+        }
+      }
+    ]
+  }
+}
+

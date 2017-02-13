@@ -1,0 +1,22 @@
+POST /api/2.3/tenders/634f162a52544f1285269e6c75a350bb/documents?acc_token=d36e5cfa2007401ba202822aa162c0d6 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 193
+Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy832172616207$
+Host: api-sandbox.openprocurement.org
+
+Response: 201 Created
+Content-Type: application/json; charset=UTF-8
+Location: http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/documents/60149115f8284c1883de2dbc7b454c29
+{
+  "data": {
+    "language": "uk", 
+    "title": "AwardCriteria.pdf", 
+    "url": "http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/documents/60149115f8284c1883de2dbc7b454c29?download=80ad44e5c10b4f13a747ec18813f135f", 
+    "format": "application/pdf", 
+    "documentOf": "tender", 
+    "datePublished": "2017-02-13T17:50:59.135666+02:00", 
+    "id": "60149115f8284c1883de2dbc7b454c29", 
+    "dateModified": "2017-02-13T17:50:59.135697+02:00"
+  }
+}
+

@@ -1,0 +1,29 @@
+PATCH /api/2.3/tenders/0afd680f6a3f48059f54ae87ce085ab2/qualifications/3872653f315841469b48180bfd78e868/complaints/a60a453fccf44a139059c271fd9fb1e4?acc_token=9f70788cab9e4765a9e3f91a3ab77c72 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 150
+Content-Type: application/json
+Host: api-sandbox.openprocurement.org
+DATA:
+{
+  "data": {
+    "status": "cancelled", 
+    "cancellationReason": "Умови виправлено"
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "status": "cancelled", 
+    "description": "Умови виставлені замовником не містять достатньо інформації, щоб заявка мала сенс.", 
+    "title": "Недостатньо інформації", 
+    "cancellationReason": "Умови виправлено", 
+    "dateCanceled": "2016-07-25T17:02:19.165386+03:00", 
+    "complaintID": "UA-2016-07-25-000001.9", 
+    "date": "2016-07-25T17:02:19.176123+03:00", 
+    "type": "claim", 
+    "id": "a60a453fccf44a139059c271fd9fb1e4"
+  }
+}
+

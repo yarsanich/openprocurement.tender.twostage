@@ -12,6 +12,7 @@ requires = [
 test_requires = requires + [
     'webtest',
     'python-coveralls',
+    'PasteDeploy'
 ]
 
 docs_requires = requires + [

@@ -1,0 +1,22 @@
+PUT /api/2.3/tenders/634f162a52544f1285269e6c75a350bb/cancellations/455eb0ecb3e8449e99fbe2d674bb3817/documents/fd6ca91bf1b14e13b13f80ae3a6fd51a?acc_token=d36e5cfa2007401ba202822aa162c0d6 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 189
+Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy195633991809$
+Host: api-sandbox.openprocurement.org
+
+Response: 200 OK
+Content-Type: application/json; charset=UTF-8
+{
+  "data": {
+    "description": "Changed description", 
+    "language": "uk", 
+    "title": "Notice-2.pdf", 
+    "url": "http://api-sandbox.openprocurement.org/api/2.3/tenders/634f162a52544f1285269e6c75a350bb/cancellations/455eb0ecb3e8449e99fbe2d674bb3817/documents/fd6ca91bf1b14e13b13f80ae3a6fd51a?download=4d9d5f9907204d658f0d9e691cd12a81", 
+    "format": "application/pdf", 
+    "documentOf": "tender", 
+    "datePublished": "2017-02-13T17:51:06.505572+02:00", 
+    "id": "fd6ca91bf1b14e13b13f80ae3a6fd51a", 
+    "dateModified": "2017-02-13T17:51:06.957109+02:00"
+  }
+}
+
