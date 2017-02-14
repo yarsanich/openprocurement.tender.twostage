@@ -20,13 +20,13 @@ class TenderTSAwardComplaintDocumentResource(TenderUaAwardComplaintDocumentResou
     def collection_post(self):
         """Tender Award  Complaint Document Upload"""
         self.request.errors.add('body', 'data', 'Upload award complaint documents not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403
         return
     @json_view(permission='edit_complaint', validators=(validate_file_update,))
     def put(self):
         """Tender Award Complaint Document Update"""
         self.request.errors.add('body', 'data', 'Update award complaint documents not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403
         return
 
     @json_view(permission='edit_complaint', content_type="application/json", validators=(validate_patch_document_data,))

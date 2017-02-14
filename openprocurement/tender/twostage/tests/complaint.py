@@ -668,8 +668,8 @@ class ComplaintResourceTest(BaseTenderContentWebTest):
 
     def test_tender_complaint(self):
         response = self.app.post_json('/tenders/{}/complaints'.format(
-            self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': author, 'status': 'claim'}}, status = 400)
-        self.assertEqual(response.status, '400 Bad Request')
+            self.tender_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': author, 'status': 'claim'}}, status = 403)
+        self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.json['errors'],
         [{u'description': u'Complaint addition not implemented', u'location': u'body', u'name': u'data'}])
 
@@ -680,8 +680,8 @@ class ComplaintResourceTest(BaseTenderContentWebTest):
             'author': author,
             'relatedLot': self.initial_lots[0]['id'],
             'status': 'claim'
-        }}, status = 400)
-        self.assertEqual(response.status, '400 Bad Request')
+        }}, status = 403)
+        self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['errors'],
         [{u'description': u'Complaint addition not implemented', u'location': u'body', u'name': u'data'}])

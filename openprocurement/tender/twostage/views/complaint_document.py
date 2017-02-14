@@ -18,21 +18,21 @@ class TenderTSComplaintDocumentResource(TenderUaComplaintDocumentResource):
     def collection_post(self):
         """Tender Complaint Document Upload"""
         self.request.errors.add('body', 'data', 'Tender Complaint Document upload not implemented')
-        self.request.errors.status = 501
+        self.request.errors.status = 403
         return
 
     @json_view(validators=(validate_file_update,), permission='edit_complaint')
     def put(self):
         """Tender Complaint Document Update"""
         self.request.errors.add('body', 'data', 'Tender Complaint Document upload not implemented')
-        self.request.errors.status = 501
+        self.request.errors.status = 403
         return
 
     @json_view(content_type="application/json", validators=(validate_patch_document_data,), permission='edit_complaint')
     def patch(self):
         """Tender Complaint Document Update"""
         self.request.errors.add('body', 'data', 'Tender Complaint Document upload not implemented')
-        self.request.errors.status = 501
+        self.request.errors.status = 403
         return
 
 

@@ -21,11 +21,11 @@ class TenderTSComplaintResource(TenderUaComplaintResource):
     def collection_post(self):
         """Post a complaint"""
         self.request.errors.add('body', 'data', 'Complaint addition not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403
 
     @json_view(content_type="application/json", validators=(validate_patch_complaint_data,), permission='edit_complaint')
     def patch(self):
         """Post a complaint resolution"""
         self.request.errors.add('body', 'data', 'Complaint addition not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403
 

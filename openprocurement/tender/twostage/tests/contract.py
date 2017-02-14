@@ -194,8 +194,8 @@ class TenderContractResourceTest(BaseTenderContentWebTest):
         self.set_status('complete', {'status': 'active.awarded'})
 
         response = self.app.post_json('/tenders/{}/awards/{}/complaints'.format(
-            self.tender_id, self.award_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': self.supplier_info}}, status=400)
-        self.assertEqual(response.status, '400 Bad Request')
+            self.tender_id, self.award_id), {'data': {'title': 'complaint title', 'description': 'complaint description', 'author': self.supplier_info}}, status=403)
+        self.assertEqual(response.status, '403 Forbidden')
         #owner_token = response.json['access']['token']
 
         tender = self.db.get(self.tender_id)

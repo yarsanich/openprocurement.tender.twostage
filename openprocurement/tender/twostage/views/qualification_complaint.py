@@ -31,11 +31,11 @@ class TenderTSQualificationComplaintResource(TenderTSAwardComplaintResource):
         """Post a complaint
         """
         self.request.errors.add('body', 'data', 'Qualifications complaints post not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403
         return
     @json_view(content_type="application/json", permission='edit_complaint', validators=(validate_patch_complaint_data,))
     def patch(self):
         """Patch the complaint
         """
         self.request.errors.add('body', 'data', 'Qualifications complaints patch not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403

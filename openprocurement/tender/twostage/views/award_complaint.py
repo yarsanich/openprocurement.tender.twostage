@@ -23,11 +23,11 @@ class TenderTSAwardComplaintResource(TenderUaAwardComplaintResource):
     @json_view(content_type="application/json", permission='create_award_complaint', validators=(validate_complaint_data))
     def collection_post(self):
         self.request.errors.add('body', 'data', 'Award Complaints not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403
         return
 
     @json_view(content_type="application/json", permission='edit_complaint', validators=(validate_patch_complaint_data))
     def patch(self):
         self.request.errors.add('body', 'data', 'Award Complaints not implemented')
-        self.request.errors.status = 400
+        self.request.errors.status = 403
         return
