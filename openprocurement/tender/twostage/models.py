@@ -41,7 +41,7 @@ create_role_ts = create_role + ts_role
 pre_qualifications_role = (blacklist('owner_token', '_attachments', 'revisions') + schematics_embedded_role)
 ts_auction_role = auction_role
 
-TENDERING_DAYS = 3
+TENDERING_DAYS = 5
 TENDERING_DURATION = timedelta(days=TENDERING_DAYS)
 TENDERING_AUCTION = timedelta(days=2)
 QUESTIONS_STAND_STILL = timedelta(days=1)

@@ -466,7 +466,7 @@ class TenderResourceTest(BaseTenderWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['status'], 'error')
         self.assertEqual(response.json['errors'], [
-            {u'description': [u'tenderPeriod should be greater than 3 days'], u'location': u'body', u'name': u'tenderPeriod'}
+            {u'description': [u'tenderPeriod should be greater than 5 days'], u'location': u'body', u'name': u'tenderPeriod'}
         ])
 
 
