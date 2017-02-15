@@ -43,11 +43,10 @@ ts_auction_role = auction_role
 
 TENDERING_DAYS = 5
 TENDERING_DURATION = timedelta(days=TENDERING_DAYS)
-TENDERING_AUCTION = timedelta(days=2)
+TENDERING_AUCTION = timedelta(days=1)
 QUESTIONS_STAND_STILL = timedelta(days=1)
 PREQUALIFICATION_COMPLAINT_STAND_STILL = timedelta(seconds=1)
 COMPLAINT_STAND_STILL = timedelta(seconds=1)
-BID_UNSUCCESSFUL_FROM = datetime(2016, 10, 18, tzinfo=TZ)
 COMPLAINT_SUBMIT_TIME = timedelta(seconds=1)
 TENDERING_EXTRA_PERIOD = timedelta(days=3)
 STAND_STILL_TIME = timedelta(seconds = 1)
@@ -66,7 +65,7 @@ class BidModelType(ModelType):
             model_class = self.model_class
 
         tender = model_instance.__parent__
-        if (tender.revisions[0].date if tender.revisions else get_now()) > BID_UNSUCCESSFUL_FROM and role not in [None, 'plain'] and getattr(model_instance, 'status') == 'unsuccessful':
+        if role not in [None, 'plain'] and getattr(model_instance, 'status') == 'unsuccessful':
             role = 'bid.unsuccessful'
 
         shaped = export_loop(model_class, model_instance,
@@ -595,7 +594,7 @@ class Tender(BaseTender):
 
     @serializable(type=ModelType(Period))
     def complaintPeriod(self):
-        return Period(dict(startDate=self.tenderPeriod.startDate, endDate=calculate_business_date(self.tenderPeriod.startDate + timedelta(seconds = 3), COMPLAINT_SUBMIT_TIME, self)))
+        return Period(dict(startDate=self.tenderPeriod.startDate, endDate=calculate_business_date(self.tenderPeriod.startDate , COMPLAINT_SUBMIT_TIME, self)))
 
     @serializable(serialize_when_none=False)
     def next_check(self):

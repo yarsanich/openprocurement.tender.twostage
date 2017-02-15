@@ -212,7 +212,7 @@ def add_next_award(request):
                     }
                 })
                 tender.awards.append(award)
-                request.response.headers['Location'] = request.route_url('Tender Awards', tender_id=tender.id, award_id=award['id'])
+                request.response.headers['Location'] = request.route_url('Tender Two Stage Awards', tender_id=tender.id, award_id=award['id'])
                 statuses.add('pending')
             else:
                 statuses.add('unsuccessful')
@@ -240,7 +240,7 @@ def add_next_award(request):
                     }
                 })
                 tender.awards.append(award)
-                request.response.headers['Location'] = request.route_url('Tender Awards', tender_id=tender.id, award_id=award['id'])
+                request.response.headers['Location'] = request.route_url('Tender Two Stage Awards', tender_id=tender.id, award_id=award['id'])
         if tender.awards[-1].status == 'pending':
             tender.awardPeriod.endDate = None
             tender.status = 'active.qualification'
