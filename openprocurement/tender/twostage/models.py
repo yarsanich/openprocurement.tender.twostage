@@ -31,7 +31,7 @@ from openprocurement.tender.openua.utils import (
 from openprocurement.tender.openua.models import (
     Complaint as BaseComplaint, Award as BaseAward, Item as BaseItem,
     PeriodStartEndRequired, SifterListType,
-    EnquiryPeriod, ENQUIRY_STAND_STILL_TIME, AUCTION_PERIOD_TIME,
+    EnquiryPeriod, AUCTION_PERIOD_TIME,
     calculate_normalized_date, Tender as OpenUATender,
 )
 
@@ -577,7 +577,7 @@ class Tender(BaseTender):
         self.enquiryPeriod = EnquiryPeriod(dict(startDate=self.tenderPeriod.startDate,
                                                 endDate=endDate,
                                                 invalidationDate=self.enquiryPeriod and self.enquiryPeriod.invalidationDate,
-                                                clarificationsUntil=calculate_business_date(endDate, ENQUIRY_STAND_STILL_TIME, self, True)))
+                                                clarificationsUntil=endDate))
         now = get_now()
         self.date = now
         if self.lots:
@@ -590,7 +590,7 @@ class Tender(BaseTender):
         return EnquiryPeriod(dict(startDate=self.tenderPeriod.startDate,
                                   endDate=endDate,
                                   invalidationDate=self.enquiryPeriod and self.enquiryPeriod.invalidationDate,
-                                  clarificationsUntil=calculate_business_date(endDate, ENQUIRY_STAND_STILL_TIME, self, True)))
+                                  clarificationsUntil=endDate))
 
     @serializable(type=ModelType(Period))
     def complaintPeriod(self):
