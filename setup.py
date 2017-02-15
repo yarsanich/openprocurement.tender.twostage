@@ -21,7 +21,7 @@ docs_requires = requires + [
 
 entry_points = {
     'openprocurement.api.plugins': [
-        'aboveThresholdTS = openprocurement.tender.twostage:includeme'
+        'aboveThresholdTS = openprocurement.tender.twostage.includeme:includeme'
     ]
 }
 
