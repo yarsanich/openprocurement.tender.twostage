@@ -633,7 +633,7 @@ class TenderResourceTest(BaseTenderWebTest):
             u'operator'
         ]))
         self.assertIn(tender['id'], response.headers['Location'])
-        self.assertEqual(iso8601.parse_date(tender['complaintPeriod']['endDate']) - iso8601.parse_date(tender['complaintPeriod']['startDate']), timedelta(seconds = 4))
+        self.assertEqual(iso8601.parse_date(tender['complaintPeriod']['endDate']) - iso8601.parse_date(tender['complaintPeriod']['startDate']), timedelta(seconds = 1))
         response = self.app.get('/tenders/{}'.format(tender['id']))
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
